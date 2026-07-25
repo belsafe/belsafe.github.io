@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backend-Less Secure AF File Exchanger</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAB3RJTUUH6gcYDgA75xP1CgAAAwBJREFUOMstk7tvm1UcQM/v3ms78SMPx07sxE2K0zRp1aLSqqSBokrQRohAhYBKMCKE2Bj4W5BYWBBsSGFAZe9SiQIKQkVAKHWdkAd1Hri2G/vzd++PIcxH52xHbn/5BXEcq/ceARTQELDGoQIaPIgFY1ANoGBEURRrrLhYg2IszjpiDahCwlgwAioYUay1eB+IogghYIwFVTQEdUYsvU4T32qSTmcJcZfNv9aJOy3GCgXUpmgf7DKYLzI0NYfNZekd7oNNkszmcD6OGR1M8vXqt5z2nsuTSdZ+3uTfnmXTCkkER8z0iRGKD3/lq1qLOGN4/eZbQA4DgU6wfPT+O5x6tkr6ZJV3b73JQnEU55KkUwmuXrtE6dWbTN96g3xnl6vnzpMulOhHPZxRSwS0Gsr6ozp3wgjO7jOWzvHdb3WedntUlpao/bhGvTFDbuYEZ0tFtuOAFYMJogxYQR/ex6fzTLsjSkOWfZSl8gQr1TLjmQFSJmL/3l0ywyPs/bNBSgIqivGqpOMWewmYmZsn7VL4+zVmoyYSH7E4mWXz+zscPDig9miP4XKB4vl5UuJRDC6OA5kM7KYzNCMhDI9y7lKWnfoO1SnLlnc8c7LMpAvEyxdIDA7R1hTZXIbDx01M0kAzpJg5dYZ2+wkTs3NsumFeeO8DKgsXmKqUWf74E3KLLzL/3BX+3G4ylBsi9iBWcAK0u55SPsN8ZYJ7v2/Qbx5S2aix3Qkc7rXwt1fpRI6/txrkMobxcomf/tjBJhyy+vlnKuIwPqY0oKz9sMZ6rY72jli2bWwU+KbnOPSeG5fPsnj9OvWDQF8DAhhVQVBwCbb6jurzS7xy42UKSbh4ZZZrH77NqIPXVlaoXHyJB42IfghYIwA4jnU0DogJPOn2yBRK5KoLfHr3FyYblpHTZxifnafTfYqzgmAIwSNicFaOx8AAYnAE+lFMfqqCxn0KY3mKCUu/18XpsawaEAOqAafqRYyoMQYA1eP68ESZ8dIkmZSj0+9zFPn/uYIIqGLEyH94DVCLv1wRMQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNi0wNy0yNFQxNDowMDo1OSswMDowMLSQqy4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjYtMDctMjRUMTQ6MDA6NTkrMDA6MDDFzROSAAAAAElFTkSuQmCC" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1 id="sessionTitle" contenteditable="plaintext-only">Backend-Less Secure AF File Exchanger — Untitled</h1>
+        </div>
+        <div class="topbar-right">
+          <div class="session-pill" id="sessionLabel">Session: local-only</div>
+          <div id="peerStatus" class="peer-status">No peer</div>
+          <div id="connectionPopover" class="connection-popover" hidden></div>
+          <div style="position: relative;">
+            <button id="copySessionBtn" type="button">Copy Link</button>
+            <div id="qrCodePopover" class="qr-popover" hidden>
+              <div id="qrCodeContainer" style="text-align: center; padding: 12px;"></div>
+            </div>
+          </div>
+          <button id="settingsBtn" class="icon-btn" type="button" aria-label="Open settings">&#9881;</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="sidebar-toggle-strip" id="sidebarToggleStrip">
+          <button id="toggleSidebarBtn" type="button" class="toggle-btn" title="Toggle sidebar">◀</button>
+        </div>
+
+        <aside class="panel tree-panel" id="treePanel">
+          <div class="panel-head">
+            <h2>Files</h2>
+            <label class="create-label" for="createName">Name</label>
+            <input id="createName" class="create-input" type="text" value="note.txt" />
+            <div class="actions">
+              <button id="newFolderBtn" type="button">New Folder</button>
+              <button id="newFileBtn" type="button">New Text</button>
+            </div>
+            <div class="actions">
+              <button id="renameBtn" type="button">Rename</button>
+              <button id="deleteBtn" type="button">Delete</button>
+            </div>
+          </div>
+
+          <div class="drop-zone" id="dropZone">
+            Drop files or folders here
+          </div>
+
+          <button id="importBtn" class="import-btn" type="button">Import Files</button>
+          <button id="importFolderBtn" class="import-btn" type="button">Import Folder</button>
+          <input id="importInput" type="file" multiple hidden />
+          <input id="importFolderInput" type="file" multiple webkitdirectory directory hidden />
+
+          <ul id="tree" class="tree" role="tree" aria-label="Filesystem tree"></ul>
+        </aside>
+
+        <section class="panel editor-panel">
+          <div class="panel-head editor-head">
+            <h2 id="editorTitle">No file selected</h2>
+            <div class="actions">
+              <button id="previewBtn" type="button" hidden disabled>Preview</button>
+              <button id="downloadBtn" type="button" disabled>Download</button>
+              <button id="saveBtn" type="button" disabled>Save</button>
+            </div>
+          </div>
+
+          <div id="editorMeta" class="editor-meta">Select a text file to edit its content.</div>
+          <textarea
+            id="editor"
+            class="editor"
+            placeholder="Create or select a text file to start writing."
+            spellcheck="false"
+            disabled
+          ></textarea>
+          <div id="preview" class="preview" hidden></div>
+        </section>
+      </section>
+    </main>
+
+    <section id="settingsPanel" class="settings-panel" hidden>
+      <div class="settings-head">
+        <h2>Settings</h2>
+        <button id="settingsCloseBtn" class="icon-btn" type="button" aria-label="Close settings">x</button>
+      </div>
+
+      <div class="settings-group">
+        <label for="themeSelect">Theme</label>
+        <select id="themeSelect">
+          <option value="auto">Auto</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <details class="settings-group settings-collapsible">
+        <summary>Network (ICE/TURN)</summary>
+        <label for="iceServersInput">ICE servers JSON</label>
+        <textarea
+          id="iceServersInput"
+          class="settings-textarea"
+          rows="6"
+          spellcheck="false"
+          placeholder='[{"urls":"stun:stun.l.google.com:19302"},{"urls":"turn:turn.example.com:3478","username":"user","credential":"pass"}]'
+        ></textarea>
+        <div class="settings-group-head">
+          <button id="saveIceServersBtn" type="button">Save ICE config</button>
+          <button id="resetIceServersBtn" type="button">Use defaults</button>
+        </div>
+        <div id="iceServersStatus" class="tx-log-meta"></div>
+      </details>
+
+      <details class="settings-group settings-collapsible">
+        <summary>DB Transaction Log</summary>
+        <div class="settings-group-head">
+          <button id="refreshTxLogBtn" type="button">Refresh</button>
+        </div>
+        <div id="txLogList" class="tx-log-list"></div>
+      </details>
+
+      <details class="settings-group settings-collapsible">
+        <summary>Connection &amp; Replication Events</summary>
+        <div class="settings-group-head">
+          <button id="clearReplicationLogBtn" type="button">Clear</button>
+        </div>
+        <div id="replicationLogList" class="tx-log-list"></div>
+      </details>
+
+      <details class="settings-group settings-collapsible">
+        <summary>Errors and warnings</summary>
+        <div class="settings-group-head">
+          <button id="clearIssuesBtn" type="button">Clear</button>
+        </div>
+        <div id="issuesList" class="tx-log-list"></div>
+      </details>
+
+      <div class="settings-group">
+        <a href="https://github.com/belsafe/belsafe.github.io" target="_blank" rel="noopener noreferrer" class="settings-github-link">View belsafe on GitHub</a>
+      </div>
+    </section>
+
+    <div id="contextMenu" class="context-menu" hidden>
+      <button id="ctxDownloadBtn" type="button">Download</button>
+      <button id="ctxRenameBtn" type="button">Rename</button>
+      <button id="ctxDuplicateBtn" type="button">Duplicate</button>
+      <button id="ctxDeleteBtn" type="button">Delete</button>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" integrity="sha384-nlUQ8ZqCbvStErob+biJNzSgltf6urV3VGqhfIfzhmg9RXmpeRm76ELw0pYnKlTR" crossorigin="anonymous"></script>
+    <script src="qrcode-lib.js" defer></script>
+    <script
+      src="markdown-lite.js"
+      defer
+    ></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>
