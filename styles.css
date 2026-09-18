@@ -552,6 +552,18 @@ button:disabled {
   margin: 0;
 }
 
+#previewBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#previewBtn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 .editor-meta {
   padding: 12px 14px;
   border-bottom: 1px solid var(--line);

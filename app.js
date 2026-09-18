@@ -17,6 +17,8 @@ const TX_CHUNK_MAX_CHARS = 12000;
 const TX_CHUNK_STALE_MS = 120000;
 const RECENT_FILES_LIMIT = 6;
 const EDITOR_SAVE_DEBOUNCE_MS = 5000;
+const EYE_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
 const DEFAULT_ICE_SERVERS = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
@@ -3549,6 +3551,17 @@ function clearTreeDropTargets() {
   }
 }
 
+function setPreviewButtonContent(mode, options = {}) {
+  if (mode === "preview") {
+    ui.previewBtn.innerHTML = "Edit";
+    ui.previewBtn.title = "Back to edit (E)";
+    return;
+  }
+
+  ui.previewBtn.innerHTML = EYE_ICON;
+  ui.previewBtn.title = options.html ? "Preview in new tab (Ctrl+P)" : "Preview (Ctrl+P)";
+}
+
 function renderEditor() {
   const selected = getSelectedNode();
   if (!selected) {
@@ -3594,7 +3607,7 @@ function renderEditor() {
     ui.downloadBtn.disabled = false;
     ui.previewBtn.disabled = false;
     ui.previewBtn.hidden = false;
-    ui.previewBtn.textContent = "Preview ↗";
+    setPreviewButtonContent("edit", { html: true });
     resetPreviewSurface();
     ui.preview.hidden = true;
     return;
@@ -3634,7 +3647,7 @@ function renderEditor() {
   ui.previewBtn.disabled = !canPreview;
   ui.previewBtn.hidden = !canPreview;
   if (canPreview) {
-    ui.previewBtn.textContent = state.editorMode === "edit" ? "Preview" : "Edit";
+    setPreviewButtonContent(state.editorMode);
   }
   ui.editor.value = typeof selected.content === "string" ? selected.content : "";
 
