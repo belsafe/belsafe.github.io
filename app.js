@@ -3110,8 +3110,24 @@ function showContextMenu(event, node) {
 
   state.contextNodeId = node.id;
   menu.hidden = false;
-  menu.style.left = `${event.clientX}px`;
-  menu.style.top = `${event.clientY}px`;
+
+  const margin = 8;
+  const menuWidth = menu.offsetWidth;
+  const menuHeight = menu.offsetHeight;
+
+  let left = event.clientX;
+  let top = event.clientY;
+
+  if (left + menuWidth + margin > window.innerWidth) {
+    left = Math.max(margin, window.innerWidth - menuWidth - margin);
+  }
+
+  if (top + menuHeight + margin > window.innerHeight) {
+    top = Math.max(margin, event.clientY - menuHeight);
+  }
+
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
 }
 
 function hideContextMenu() {
