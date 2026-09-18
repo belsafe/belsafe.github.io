@@ -6,6 +6,7 @@ const STORE_TX_LOG = "txLog";
 const STORE_TX_ENTRIES = "txEntries";
 const STORE_META = "meta";
 const ROOT_ID = "root";
+const README_ID = "welcome-readme";
 const SESSION_BITS = 132;
 const SESSION_CHARS = Math.ceil(SESSION_BITS / 6);
 const KEY_DERIVATION_SALT = "belsfe-kdf-salt-v1";
@@ -578,6 +579,42 @@ function reqToPromise(request) {
   });
 }
 
+const WELCOME_README = `# Welcome to Backend-Less Secure AF File Exchanger
+
+This is your shared, encrypted space. Everything here lives only in your
+browser and is synced directly to the peers you invite. There is no server
+storing your files.
+
+## Getting started
+
+- **Create** a new text file or folder from the toolbar on the left.
+- **Import** files or folders by dropping them on the drop zone, or with the
+  import buttons.
+- **Right-click** an item to rename, duplicate, download or delete it.
+- **Edit** text files in the editor; changes are saved automatically.
+- Press **Ctrl+P** (or the eye button) to preview Markdown.
+- **Share** this space with the "Copy Link" button. Anyone with the link joins
+  the same session.
+
+## Host and share a website, no server needed
+
+You can use this space to host a website straight from the browser:
+
+1. Import your site files, for example **index.html**, **style.css** and
+   **app.js** (keep them in the same folder).
+2. Open the HTML file and click the eye button to preview it in a new tab.
+3. Share the session link with someone else. They can open the same HTML file
+   and browse your site.
+
+Relative links between files (CSS, JS, images) are resolved automatically, and
+the content never leaves the peers' browsers.
+
+## Notes
+
+- Files are encrypted in transit between peers.
+- Everything is stored locally, so clearing browser data removes your copy.
+`;
+
 async function ensureRoot() {
   const store = tx();
   const root = await reqToPromise(store.get(ROOT_ID));
@@ -596,7 +633,23 @@ async function ensureRoot() {
     updatedAt: now,
     size: 0,
   });
-  await commitLocalNodeEntries([makeUpsertEntry(rootNode)], "system:root-init");
+  const readmeNode = makeNode({
+    id: README_ID,
+    parentId: ROOT_ID,
+    type: "file",
+    name: "ReadMe.md",
+    mime: "text/markdown",
+    content: WELCOME_README,
+    updatedAt: now,
+    size: WELCOME_README.length,
+  });
+
+  await commitLocalNodeEntries(
+    [makeUpsertEntry(rootNode), makeUpsertEntry(readmeNode)],
+    "system:root-init"
+  );
+  state.selectedId = readmeNode.id;
+  state.editorMode = "preview";
 }
 
 async function refreshNodes() {
