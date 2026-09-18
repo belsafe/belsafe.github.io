@@ -383,6 +383,71 @@ button:disabled {
   width: calc(100% - 28px);
 }
 
+.recent-panel {
+  padding: 12px 14px 6px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.recent-panel h3 {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-row {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 5px 8px;
+  text-align: left;
+  font-weight: 500;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  background: transparent;
+}
+
+.recent-row:hover {
+  background: var(--bg-soft);
+}
+
+.recent-row.selected {
+  background: var(--bg-soft);
+  border-color: #bdbdbd;
+}
+
+.recent-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-meta {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.recent-empty {
+  padding: 5px 8px;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+}
+
 .tree {
   list-style: none;
   margin: 0;

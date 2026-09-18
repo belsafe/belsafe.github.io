@@ -15,6 +15,7 @@ const PEER_HEARTBEAT_MS = 60000;
 const PEER_STALE_MS = 150000;
 const TX_CHUNK_MAX_CHARS = 12000;
 const TX_CHUNK_STALE_MS = 120000;
+const RECENT_FILES_LIMIT = 6;
 const DEFAULT_ICE_SERVERS = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
@@ -93,6 +94,7 @@ const state = {
 
 const ui = {
   tree: document.getElementById("tree"),
+  recentList: document.getElementById("recentList"),
   editor: document.getElementById("editor"),
   editorTitle: document.getElementById("editorTitle"),
   editorMeta: document.getElementById("editorMeta"),
@@ -3287,7 +3289,52 @@ function splitFileNameExt(filename) {
 function render() {
   syncHashWithState();
   renderTree();
+  renderRecentFiles();
   renderEditor();
+}
+
+function renderRecentFiles() {
+  ui.recentList.innerHTML = "";
+
+  const recent = state.nodes
+    .filter((node) => node.type === "file")
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+    .slice(0, RECENT_FILES_LIMIT);
+
+  if (!recent.length) {
+    const empty = document.createElement("li");
+    empty.className = "recent-empty";
+    empty.textContent = "No files yet";
+    ui.recentList.appendChild(empty);
+    return;
+  }
+
+  for (const node of recent) {
+    const li = document.createElement("li");
+
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = `recent-row${state.selectedId === node.id ? " selected" : ""}`;
+
+    const name = document.createElement("span");
+    name.className = "recent-name";
+    name.textContent = node.name;
+
+    const meta = document.createElement("span");
+    meta.className = "recent-meta";
+    meta.textContent = formatDate(node.updatedAt);
+
+    row.appendChild(name);
+    row.appendChild(meta);
+    row.addEventListener("click", () => {
+      hideContextMenu();
+      state.selectedId = node.id;
+      render();
+    });
+
+    li.appendChild(row);
+    ui.recentList.appendChild(li);
+  }
 }
 
 function renderTree() {
