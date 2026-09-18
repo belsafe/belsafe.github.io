@@ -16,6 +16,7 @@ const PEER_STALE_MS = 150000;
 const TX_CHUNK_MAX_CHARS = 12000;
 const TX_CHUNK_STALE_MS = 120000;
 const RECENT_FILES_LIMIT = 6;
+const EDITOR_SAVE_DEBOUNCE_MS = 5000;
 const DEFAULT_ICE_SERVERS = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
@@ -3140,11 +3141,26 @@ function onEditorInput() {
     window.clearTimeout(state.saveTimer);
   }
   state.saveTimer = window.setTimeout(() => {
+    state.saveTimer = null;
     saveEditorNow();
-  }, 250);
+  }, EDITOR_SAVE_DEBOUNCE_MS);
+}
+
+function flushPendingEditorSave() {
+  if (!state.saveTimer) {
+    return;
+  }
+  window.clearTimeout(state.saveTimer);
+  state.saveTimer = null;
+  saveEditorNow();
 }
 
 async function saveEditorNow() {
+  if (state.saveTimer) {
+    window.clearTimeout(state.saveTimer);
+    state.saveTimer = null;
+  }
+
   const selected = getSelectedNode();
   if (!selected || selected.type !== "file" || !isTextFile(selected)) {
     return;
@@ -3328,6 +3344,7 @@ function renderRecentFiles() {
     row.appendChild(meta);
     row.addEventListener("click", () => {
       hideContextMenu();
+      flushPendingEditorSave();
       state.selectedId = node.id;
       render();
     });
@@ -3482,6 +3499,7 @@ function createTreeItem(node, depth, hasChildren) {
 
   row.addEventListener("click", () => {
     hideContextMenu();
+    flushPendingEditorSave();
     state.selectedId = node.id;
     if (node.type === "folder" && hasChildren) {
       if (state.expanded.has(node.id)) {
